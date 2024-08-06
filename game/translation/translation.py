@@ -1,21 +1,14 @@
-from typing import Dict, Generic, TypeVar, Any, Literal, get_args, Tuple
-from game.info.data import Information
+from game.translation.exception import UnsupportedLanguage, InvalidLanguageFile
+from typing import Dict, Any, Literal, get_args, Tuple
 from json.decoder import JSONDecodeError
-import os
-import json
+from game.info.data import Information
+import json, os
 
 
-T = TypeVar("T")
 supported_languages = Literal["en_us", "es_mx"]
 
-class UnsupportedLanguage(Exception):
-    def __init__(self, *args: Any, **kwargs: Any) -> None: pass
 
-class InvalidLanguageFile(Exception):
-    def __init__(self, *args: Any, **kwargs: Any) -> None: pass
-
-
-class TranslationKey(Generic[T]):
+class TranslationKey:
     _translation: Dict[str, str] = {}
     _language: str = ""
 
@@ -24,8 +17,7 @@ class TranslationKey(Generic[T]):
         cls._valid_languages(lang)
         cls._lang_file_exist(lang)
         cls._language = lang
-
-        lang_file = Information.lang_path + f"\\{lang}.json"
+        lang_file: str = Information.path.lang + f"\\{lang}.json"
         try:
             with open(lang_file, "r") as file:
                 cls._translation = json.load(file)
@@ -43,7 +35,7 @@ class TranslationKey(Generic[T]):
 
     @staticmethod
     def _lang_file_exist(lang: supported_languages) -> None:
-        if f"{lang}.json" not in os.listdir(Information.lang_path):
+        if f"{lang}.json" not in os.listdir(Information.path.lang):
             raise FileNotFoundError(f'Language file "{lang}.json" not found.')
 
     @classmethod
