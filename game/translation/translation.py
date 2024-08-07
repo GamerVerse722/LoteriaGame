@@ -4,9 +4,7 @@ from json.decoder import JSONDecodeError
 from game.info.data import Information
 import json, os
 
-
 supported_languages = Literal["en_us", "es_mx"]
-
 
 class TranslationKey:
     _translation: Dict[str, str] = {}
@@ -17,7 +15,7 @@ class TranslationKey:
         cls._valid_languages(lang)
         cls._lang_file_exist(lang)
         cls._language = lang
-        lang_file: str = Information.path.lang + f"\\{lang}.json"
+        lang_file: str = os.path.join(Information.path.lang, f"{lang}.json")
         try:
             with open(lang_file, "r") as file:
                 cls._translation = json.load(file)
